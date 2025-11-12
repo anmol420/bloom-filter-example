@@ -1,7 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/anmol420/bloom-filter-example/internal/env"
+)
 
 func main() {
-	fmt.Println("Hello World")
+	port := env.GetStringEnv("PORT")
+	fmt.Println(port)
 }
