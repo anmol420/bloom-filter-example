@@ -1,9 +1,16 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+)
 
-func (app *application) healthCheckHandler(w http.ResponseWriter, _ *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Server Ready!!"))
+func (app *application) healthCheckHandler(w http.ResponseWriter, r *http.Request) {
+	data := successResponse{
+		Status:  http.StatusOK,
+		Message: "Server Ready!",
+		Data:    nil,
+	}
+	if err := app.sendSuccessResponse(w, &data); err != nil {
+		app.internalServerError(w, r, err)
+	}
 }
