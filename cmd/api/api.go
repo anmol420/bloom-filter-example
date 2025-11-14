@@ -7,7 +7,14 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-playground/validator/v10"
 )
+
+var Validate *validator.Validate
+
+func init() {
+	Validate = validator.New(validator.WithRequiredStructEnabled())
+}
 
 type application struct {
 	config config
@@ -28,6 +35,10 @@ func (app *application) mount() http.Handler {
 
 	r.Route("/api/v1", func(r chi.Router) {
 		r.Get("/health", app.healthCheckHandler)
+		r.Route("/users", func(r chi.Router) {
+			r.Post("/create", app.createUserHandler)
+			r.Get("/search/{username}", app.searchUserHandler)
+		})
 	})
 
 	return r
