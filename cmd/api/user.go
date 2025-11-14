@@ -1,6 +1,10 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/go-chi/chi/v5"
+)
 
 type CreateUserPayload struct {
 	Username string `json:"username" validate:"required,max=100"`
@@ -21,7 +25,7 @@ func (app *application) createUserHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 	// TODO: Cache Check
-	// TODO: Database calls -> 1. Check if exists (bloom filter) 2. Create User
+	// TODO: Database calls -> 1. Create User
 	// TODO: Cache update -> Add username to cache
 	if err := app.sendSuccessResponse(w, &successResponse{Status: http.StatusCreated, Data: &createUserResponse{Username: payload.Username}, Message: "User created"}); err != nil {
 		app.internalServerError(w, r, err)
@@ -29,4 +33,14 @@ func (app *application) createUserHandler(w http.ResponseWriter, r *http.Request
 	}
 }
 
-func (app *application) searchUserHandler(w http.ResponseWriter, r *http.Request) {}
+func (app *application) searchUserHandler(w http.ResponseWriter, r *http.Request) {
+	username := chi.URLParam(r, "username")
+	data := map[string]any{
+		"username": username,
+		"found": true,
+	}
+	if err := app.sendSuccessResponse(w, &successResponse{Status: http.StatusOK, Data: data, Message: "User Searched"}); err != nil {
+		app.internalServerError(w, r, err)
+		return
+	}
+}
