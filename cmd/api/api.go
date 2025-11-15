@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/anmol420/bloom-filter-example/internal/store"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-playground/validator/v10"
@@ -18,10 +19,17 @@ func init() {
 
 type application struct {
 	config config
+	store  store.Storage
 }
 
 type config struct {
 	port string
+	db   dbConfig
+}
+
+type dbConfig struct {
+	dbURI  string
+	dbName string
 }
 
 func (app *application) mount() http.Handler {
@@ -46,11 +54,11 @@ func (app *application) mount() http.Handler {
 
 func (app *application) run(mux http.Handler) error {
 	srv := &http.Server{
-		Addr: app.config.port,
-		Handler: mux,
+		Addr:         app.config.port,
+		Handler:      mux,
 		WriteTimeout: time.Second * 30,
-		ReadTimeout: time.Second * 10,
-		IdleTimeout: time.Minute,
+		ReadTimeout:  time.Second * 10,
+		IdleTimeout:  time.Minute,
 	}
 	log.Printf("Server Started On %s", app.config.port)
 	return srv.ListenAndServe()
