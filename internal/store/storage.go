@@ -15,6 +15,8 @@ var (
 type Storage struct {
 	Users interface {
 		Create(context.Context, *User) error
+		FindUser(context.Context, string, string) (bool, error)
+		SearchByUsername(context.Context, string) (*User, error)
 	}
 	client *mongo.Client
 }

@@ -14,3 +14,8 @@ func (app *application) badRequestError(w http.ResponseWriter, r *http.Request, 
 	log.Printf("Bad Request Error: %s Path: %s Error: %s", r.Method, r.URL.Path, err.Error())
 	app.sendErrorResponse(w, &errorResponse{Status: http.StatusBadRequest, Message: "Bad Request Error"})
 }
+
+func (app *application) customError(w http.ResponseWriter, r *http.Request, status int, err error) {
+	log.Printf("Error: %s Path: %s Error: %s", r.Method, r.URL.Path, err.Error())
+	app.sendErrorResponse(w, &errorResponse{Status: status, Message: err.Error()})
+}

@@ -24,7 +24,7 @@ func main() {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	client, _, err := db.New(ctx, cfg.db.dbURI, cfg.db.dbName)
+	client, db, err := db.New(ctx, cfg.db.dbURI, cfg.db.dbName)
 	if err != nil {
 		log.Fatal(err)
 		os.Exit(1)
@@ -36,6 +36,10 @@ func main() {
 		}
 	}()
 	log.Println("Database Connection Established!")
+	if err := store.UserUniqueIndex(ctx, db.Collection("users")); err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+	}
 	store := store.NewMongoStorage(client, dbName)
 	app := &application{
 		config: cfg,
